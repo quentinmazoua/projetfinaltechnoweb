@@ -60,4 +60,9 @@
         ?>
     </div>
     <button type="submit" class="btn btn-primary">Inscription</button>
+    <?php if(isset($email_taken))
+          {
+              echo "<br><br><p class='text-danger'>Cette adresse mail est déjà utilisée</p>";
+          }
+    ?>
 </form>

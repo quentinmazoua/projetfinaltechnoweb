@@ -38,7 +38,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<h1><?php echo $title; ?> <small>We can't find that!</small></h1>
+				<h1><?php echo $title; ?> <small>Nous n'avons pas pu trouver ce que vous cherchez!</small></h1>
 				<hr>
 				<p>La page spécifiée est introuvable <code></code>.</p>
 			</div>

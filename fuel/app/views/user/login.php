@@ -36,6 +36,6 @@
     </div>
     <button type="submit" class="btn btn-primary">Connexion</button>
     <?php if(isset($authentication_failed)){ echo "<br><br><p class='text-danger'>L'adresse mail ou le mot de passe est incorrect</p>"; }
-          if(isset($new_user)) { echo "<br><br><p class='text-success'>Bienvenue ".$new_user.", vous pouvez vous connecter dès maintenant.</p>"; }
+          if(Session::get_flash('new_user', null, false) != null) { echo "<br><br><p class='text-success'>Bienvenue ".Session::get_flash('new_user', null, true).", vous pouvez vous connecter dès maintenant.</p>"; }
     ?>
 </form>

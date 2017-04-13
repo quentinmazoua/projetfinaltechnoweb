@@ -46,7 +46,7 @@ class Controller_User extends Controller
                         {
                             Session::create()->set_config('expiration_time', 7200)->set_config('expire_on_close', true);
                         }
-                        Session::set('user', array('user_id' => $user->id, 'user_firstname' => $user->prenom, 'user_name' => $user->nom, 'user_email' => $user->email));
+                        Session::set('user', array('user_id' => $user->id, 'user_firstname' => $user->prenom, 'user_lastname' => $user->nom, 'user_email' => $user->email));
                         return Response::redirect("/");
                     }
                     else
@@ -134,9 +134,8 @@ class Controller_User extends Controller
 
                         $user->save(); // Enregistrement du nouvel utilisateur dans la BDD
 
-                        $view->set_global('title', 'Connexion');
-                        $view->set_global('new_user', Input::post('prenom'));
-                        $view->content = View::forge('user/login');
+                        Session::set_flash('new_user', Input::post('prenom'));
+                        return Response::redirect("login");
                     }
 
                     return Response::forge($view);
@@ -161,6 +160,22 @@ class Controller_User extends Controller
 
                 return Response::forge($view);
             }
+        }
+        else
+        {
+            return Response::redirect("/");
+        }
+    }
+
+    public function action_account()
+    {
+        if(Session::get('user') != null)
+        {
+            $view = View::forge('base');
+            $view->content = View::forge('user/account');
+
+            $view->set_global('title', 'Mon compte');
+            return Response::forge($view);
         }
         else
         {

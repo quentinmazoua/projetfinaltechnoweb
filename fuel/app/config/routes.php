@@ -5,5 +5,9 @@ return array(
 	'page/(:any)' => array('pages/page/$1', 'name' => 'page_any'),
 	'login' => 'user/login',
 	'register' => 'user/register',
-	'deconnexion' => 'user/logout'
+	'logout' => 'user/logout',
+	'account' => 'user/account',
+	'properties' => 'property/properties',
+	'rentals' => 'rental/rentals',
+	'property/add' => 'property/add'
 );
