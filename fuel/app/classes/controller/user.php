@@ -46,7 +46,14 @@ class Controller_User extends Controller
                         {
                             Session::create()->set_config('expiration_time', 7200)->set_config('expire_on_close', true);
                         }
-                        Session::set('user', array('user_id' => $user->id, 'user_firstname' => $user->prenom, 'user_lastname' => $user->nom, 'user_email' => $user->email));
+                        Session::set('user', array(
+                            'user_id' => $user->id,
+                            'user_firstname' => $user->prenom, 
+                            'user_lastname' => $user->nom, 
+                            'user_email' => $user->email, 
+                            'user_date_inscription' => $user->date_inscription,
+                            'user_image' => $user->image_profil
+                        ));
                         return Response::redirect("/");
                     }
                     else

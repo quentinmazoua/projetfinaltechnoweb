@@ -9,5 +9,6 @@ return array(
 	'account' => 'user/account',
 	'properties' => 'property/properties',
 	'rentals' => 'rental/rentals',
-	'property/add' => 'property/add'
+	'property/add' => 'property/add',
+	'property/view/(:num)' => array('property/view/$1', 'name' => 'view_property')
 );

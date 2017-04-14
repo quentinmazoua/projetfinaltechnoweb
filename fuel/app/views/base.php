@@ -29,12 +29,14 @@
                     echo '<li><a href='.Router::get("register").'>Inscription</a></li>';
                 }
                 echo '<li><a href='.Router::get('page_any', array('contact')).'>Contact</a></li>';// Route vers page/contact (page_any est le nom de la route, contact est le parametre $1)
-                echo '<li><form action="search" method="get" style="margin-left:20px;"><input name="q" type="text" placeholder="Recherche">&nbsp;<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button></form></li>';
+                echo '<li><a href='.Router::get('page_any', array('about')).'>À propos</a></li>';
+                echo '<li><form action="search" method="get"><input name="q" type="text" placeholder="Recherche" id="inputRecherche"><button class="btn btn-default" style="margin-left:6px;padding:4px 7px;" type="submit"><span class="glyphicon glyphicon-search"></span></button></form></li>';
                 ?>
             </ul>
         </nav>
         <div class="container">
             <?php echo $content; ?>
         </div>
+        <footer>Copyright &copy; <?php echo date("Y"); ?> Mazoua Industries Inc. Tous droits réservés</footer>
     </body>
 </html>

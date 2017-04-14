@@ -30,5 +30,9 @@
               }
         ?>
     </div>
+    <div class="form-group">
+        <label for="file_photo">Joindre des photos (max. 20)
+        <input name ="file_photo" type="file" class="form-control">
+    </div>
     <button type="submit" class="btn btn-primary">Publier</button>
 </form>

@@ -58,3 +58,22 @@ nav a:visited {
     display:none;
   }
 }
+
+#inputRecherche {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 7px;
+  width:300px;
+}
+
+footer {
+  position:absolute;
+  bottom:0px;
+  background-color:#65A8A6;
+  color:#F8ECC2;
+  text-align:center;
+  width:100%;
+  padding-top:20px;
+  padding-bottom:20px;
+  font-size:1.1em;
+}

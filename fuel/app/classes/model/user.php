@@ -14,7 +14,8 @@ class User extends \Model_Crud
     'nom',
     'email',
     'password',
-    'date_inscription'
+    'date_inscription',
+    'image_profil'
     );
 
     protected static $_mass_blacklist = array(

@@ -9,10 +9,23 @@ class Controller_Property extends Controller
     {
         if(Session::get('user') != null)
         {
+            $properties_in_db = Property::find(array(
+                'where' => array('id_proprietaire' => Session::get('user')['user_id']) // Recherche des propriétés de l'utilisateur dans la BDD
+            ));
+
+            $properties = array();
+
+            foreach($properties_in_db as $property)
+            {
+                $properties[] = array('adresse' => $property->adresse, 'pays' => $property->pays, 'ville' => $property->ville, 'date_ajout' => $property->date_ajout);
+            }
+            
+
             $view = View::forge('base');
             $view->content = View::forge('property/properties');
 
             $view->set_global('title', 'Mes propriétés');
+            $view->set_global('proprietes', $properties);
 
             return Response::forge($view);
         }
@@ -84,5 +97,10 @@ class Controller_Property extends Controller
         {
             return Response::redirect("/");
         }
+    }
+
+    public function action_view($id)
+    {
+        
     }
 }

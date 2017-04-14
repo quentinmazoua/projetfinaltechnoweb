@@ -16,7 +16,7 @@ class Presenter_404 extends Presenter
 	 */
 	public function view()
 	{
-		$messages = array('Oups', 'Erreur', 'Uh Oh!', 'Nope, not here.', 'Huh?');
+		$messages = array('Oups', 'Erreur', 'Oh Oh!', 'Non, pas ici.', 'Hum?');
 		$this->title = $messages[array_rand($messages)];
 	}
 }
