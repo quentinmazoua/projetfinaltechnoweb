@@ -1,3 +1,4 @@
+<br>
 <form action=/page/contact method="post">
   <div class="form-group">
     <label for="email">Adresse mail</label>

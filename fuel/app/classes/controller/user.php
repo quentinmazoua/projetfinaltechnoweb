@@ -190,9 +190,51 @@ class Controller_User extends Controller
         }
     }
 
+    public function action_edit()
+    {
+        if(Session::get('user') != null)
+        {
+            $view = View::forge('base');
+            $view->content = View::forge('user/account');
+
+            $view->set_global('title', 'Mon compte');
+
+            return Response::forge($view);
+        }
+        else
+        {
+            return Response::redirect("/");
+        }
+    }
+
     public function action_logout()
     {
         Session::destroy();
         return Response::redirect('/');
+    }
+
+    public function action_view($id)
+    {
+        $user_in_db = User::find(array(
+            'where' => array('id' => $id) // Recherche de l'utilisateur dans la BDD
+        ));
+
+        $user = $user_in_db[0];
+
+        $user = array(
+            'prenom' => $user->prenom,
+            'nom' => $user->nom,
+            'email' => $user->email,
+            'image_profil' => $user->image_profil,
+            'date_inscription' => $user->date_inscription
+        );
+
+        $view = View::forge('base');
+        $view->content = View::forge('user/user');
+
+        $view->set_global('title', $user['prenom']." ".$user['nom']);
+        $view->set_global('user', $user);
+
+        return Response::forge($view);
     }
 }

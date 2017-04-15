@@ -38,15 +38,15 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<h1><?php echo $title; ?> <small>Nous n'avons pas pu trouver ce que vous cherchez!</small></h1>
+				<h1><?php echo $title; ?> <small>Nous n'avons pas pu trouver ce que vous cherchez</small></h1>
 				<hr>
-				<p>La page spécifiée est introuvable <code></code>.</p>
+				<p>La page spécifiée est introuvable<code><?php echo Uri::current();?></code>.</p>
 			</div>
 		</div>
 		<footer>
 			<p class="pull-right">Page chargée en {exec_time}s. {mem_usage}mo de mémoire utilisés.</p>
 			<p>
-				<a href="http://fuelphp.com">FuelPHP</a>est sous licence MIT.<br>
+				<a href="http://fuelphp.com">FuelPHP </a>est sous licence MIT.<br>
 				<small>Version: <?php echo Fuel::VERSION; ?></small>
 			</p>
 		</footer>

@@ -1,6 +1,7 @@
 <?php
 
 use \Model\Property;
+use \Model\User;
 
 class Controller_Property extends Controller
 {
@@ -15,12 +16,14 @@ class Controller_Property extends Controller
 
             $properties = array();
 
-            foreach($properties_in_db as $property)
+            if(count($properties_in_db) > 0)
             {
-                $properties[] = array('adresse' => $property->adresse, 'pays' => $property->pays, 'ville' => $property->ville, 'date_ajout' => $property->date_ajout);
+                foreach($properties_in_db as $property)
+                {
+                    $properties[] = array('nom' => $property->nom, 'adresse' => $property->adresse, 'pays' => $property->pays, 'ville' => $property->ville, 'date_ajout' => $property->date_ajout);
+                }
             }
             
-
             $view = View::forge('base');
             $view->content = View::forge('property/properties');
 
@@ -44,6 +47,8 @@ class Controller_Property extends Controller
                 $val = Validation::forge();
 
                 // Définition des champs du formulaire et des règles de validation
+                $val->add('nom', 'nom')->add_rule('required');
+
                 $val->add('adresse', 'adresse')->add_rule('required');
 
                 $val->add('ville', 'ville')->add_rule('required');
@@ -57,6 +62,7 @@ class Controller_Property extends Controller
                         // Création d'une nouvelle propriété
                         $property = Property::forge()->set(array(
                             'id_proprietaire' => Session::get('user')['user_id'],
+                            'nom' => Input::post('nom'),
                             'adresse' => Input::post('adresse'),
                             'pays' => Input::post('pays'),
                             'ville' => Input::post('ville'),
@@ -101,6 +107,52 @@ class Controller_Property extends Controller
 
     public function action_view($id)
     {
-        
+        $property_in_db = Property::find(array(
+            'where' => array('id' => $id)
+        ));
+
+        if(count($property_in_db) > 0)
+        {
+            $property = $property_in_db[0];
+
+            $view = View::forge('base');
+            $view->content = View::forge('property/property');
+
+            $view->set_global('title', $property->nom);
+
+            $proprietaire_in_db = User::find(array(
+                'where' => array('id' => $property->id_proprietaire)
+            ));
+
+            $proprietaire = $proprietaire_in_db[0];
+
+            $property = array(
+                'id' => $property->id,
+                'id_proprietaire' => $property->id_proprietaire,
+                'nom' => $property->nom, 
+                'adresse' => $property->adresse, 
+                'pays' => $property->pays, 
+                'ville' => $property->ville, 
+                'date_ajout' => $property->date_ajout
+            );
+
+            $proprietaire = array(
+                'id' => $proprietaire->id, 
+                'prenom' => $proprietaire->prenom,
+                'nom' => $proprietaire->nom
+            );
+
+            $view->set_global('propriete', $property);
+            $view->set_global('proprietaire', $proprietaire);
+
+            Session::set_flash('propriete', $property);
+            Session::set_flash('proprietaire', $proprietaire);
+
+            return Response::forge($view);
+        }
+        else
+        {
+            return Response::forge(Presenter::forge('404'));
+        }
     }
 }

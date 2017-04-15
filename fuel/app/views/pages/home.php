@@ -1,3 +1,4 @@
+<br>
 <p><?php if(Session::get('user') != null)
       {
       	echo 'Bonjour '.Session::get('user')['user_firstname'].", ";

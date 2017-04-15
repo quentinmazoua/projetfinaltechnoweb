@@ -11,6 +11,7 @@ class Property extends \Model_Crud
     protected static $_properties = array(
     'id',
     'id_proprietaire',
+    'nom',
     'adresse',
     'pays',
     'ville',
