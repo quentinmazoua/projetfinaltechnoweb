@@ -3,6 +3,7 @@
 use \Model\Property;
 use \Model\User;
 use \Model\Rental;
+use \Model\Commentaire;
 
 class Controller_Property extends Controller
 {
@@ -138,9 +139,37 @@ class Controller_Property extends Controller
                 'nom' => $proprietaire->nom
             );
 
+            $commentaires_db = Commentaire::find(array(
+                'where' => array('id_propriete' => $id)
+            ));
+
+            $commentaires = array();
+
+            if(count($commentaires_db) > 0)
+            {
+                foreach($commentaires_db as $commentaire)
+                {
+                    $locataire = User::find(array(
+                        'where' => array('id' => $commentaire->id_locataire)
+                    ));
+
+                    $locataire = $locataire[0];
+
+                    $commentaires[] = array(
+                        'id_locataire' => $locataire->id,
+                        'prenom_locataire' => $locataire->prenom,
+                        'nom_locataire' => $locataire->nom,
+                        'date_publication' =>Date::create_from_string($commentaire->date_publication, "%Y-%m-%d")->format("%d/%m/%Y"),
+                        'note' => $commentaire->note,
+                        'texte' => $commentaire->texte
+                    );
+                }
+            }
+
             $view->set_global('propriete', $property);
             $view->set_global('proprietaire', $proprietaire);
             $view->set_global('galerie', true);
+            $view->set_global('commentaires', $commentaires);
 
             Session::set_flash('propriete', $property);
             Session::set_flash('proprietaire', $proprietaire);
@@ -232,6 +261,74 @@ class Controller_Property extends Controller
             Session::set_flash('id_propriete', $id);
 
             return Response::forge($view);
+        }
+    }
+
+    public function action_comment($id)
+    {
+        if(Session::get('user') != null)
+        {
+            if(Input::method() === "POST")
+            {
+                $val = Validation::forge();
+
+                // Définition des champs du formulaire et des règles de validation
+                $val->add('texte', 'commentaire')->add_rule('required');
+
+                $val->set_message('required', 'Le champ :label est obligatoire');        
+                
+                if ($val->run()) // Si tous les champs du formulaire sont valides
+                {
+                    $comment_db = Commentaire::find(array(
+                        'where' => array('id_locataire' => Session::get('user')['user_id'], 'id_propriete' => $id)
+                    ));
+
+                    if(count($comment_db) > 0) // L'utilisateur a déjà commenté cette propriété
+                    {
+                        Commentaire::update_comment($comment_db[0]->id, Input::post('score'), Input::post('texte'));
+                    }
+                    else
+                    {
+                        // Création d'un nouveau commentaire
+                        $comment = Commentaire::forge()->set(array(
+                            'id_propriete' => $id,
+                            'id_locataire' => Session::get('user')['user_id'],
+                            'date_publication' => Date::time()->format("%Y-%m-%d"),
+                            'note' => Input::post('score'),
+                            'texte' => Input::post('texte')
+                        ));
+
+                        $comment->save(); // Enregistrement du nouveau commentaire dans la BDD
+                    }
+
+                    return Response::redirect("rentals");
+                }
+                else
+                {
+                    $view = View::forge('base');
+                    $view->content = View::forge('property/comment');
+
+                    $view->set_global('title', 'Publier un commentaire');
+                    $view->set_global('id', $id);
+                    $view->set_global('errors', $val->errors());
+
+                    return Response::forge($view);    
+                }
+            }
+            else
+            {
+                $view = View::forge('base');
+                $view->content = View::forge('property/comment');
+
+                $view->set_global('title', 'Publier un commentaire');
+                $view->set_global('id', $id);
+
+                return Response::forge($view);
+            }
+        }
+        else
+        {
+            return Response::redirect("/");
         }
     }
 }

@@ -19,5 +19,7 @@ return array(
 	'rental/cancel/(:num)' => array('rental/cancel/$1', 'name' => 'cancel_rental'),
 	'property/delete/(:num)' => array('property/delete/$1', 'name' => 'delete_property'),
 	'property/rentals/(:num)' => array('property/rentals/$1', 'name' => 'property_rentals'),
-	'accept-rental/(:num)' => array('rental/accept/$1', 'name' => 'accept_rental')
+	'accept-rental/(:num)' => array('rental/accept/$1', 'name' => 'accept_rental'),
+	'comment/(:num)' => array('property/comment/$1', 'name' => 'comment_property'),
+
 );
