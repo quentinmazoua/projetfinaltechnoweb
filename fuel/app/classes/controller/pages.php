@@ -1,5 +1,8 @@
 <?php
 
+use \Model\User;
+use \Model\Property;
+
 class Controller_Pages extends Controller
 {
 	public function action_index()
@@ -35,10 +38,28 @@ class Controller_Pages extends Controller
         {
             if(Input::get('q') != "")
             {
+                $q = Input::get('q');
+
+                $search_users = User::search(Input::get('q'));
+                $search_properties = Property::search(Input::get('q'));
+
+                if(count($search_users) === 0)
+                {
+                    $search_users = array();
+                }
+
+                if(count($search_properties) === 0)
+                {
+                    $search_properties = array();
+                }
+
                 $view = View::forge('base');
 
                 $view->set_global('title', 'Résultats de votre recherche');
                 $view->set_global('query', Input::get('q'));
+                $view->set_global('utilisateurs', $search_users);
+                $view->set_global('proprietes', $search_properties);
+
                 $view->content = View::forge('pages/search');
 
                 return Response::forge($view);

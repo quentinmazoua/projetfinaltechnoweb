@@ -1,6 +1,7 @@
 <?php
 
 namespace Model;
+use Fuel\Core\DB;
 
 class Property extends \Model_Crud
 {
@@ -22,4 +23,13 @@ class Property extends \Model_Crud
     'id'
     );
 
+    public static function search($q)
+    {
+        $query = DB::select('*')->from('proprietes')
+                                ->where('nom', 'like', '%'.$q.'%')
+                                ->or_where('adresse', 'like', '%'.$q.'%')
+                                ->or_where('ville', 'like', '%'.$q.'%');
+                                
+        return $query->execute();
+    }
 }
