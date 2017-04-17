@@ -6,7 +6,15 @@
         
         <?php 
         echo Asset::css('bootstrap.min.css');
-        echo Asset::css('style.css'); 
+        echo Asset::css('style.css');
+        
+        if(isset($galerie))
+        {
+            echo Asset::css('fotorama.css');
+            echo Asset::js('jquery-3.1.1.min.js');
+            echo Asset::js('fotorama.js');
+            echo Asset::js('property-manager.js');
+        }
         ?>
 
     </head>
@@ -30,7 +38,7 @@
                 }
                 echo '<li><a href='.Router::get('page_any', array('contact')).'>Contact</a></li>';// Route vers page/contact (page_any est le nom de la route, contact est le parametre $1)
                 echo '<li><a href='.Router::get('page_any', array('about')).'>À propos</a></li>';
-                echo '<li><form action="search" method="get"><input name="q" type="text" placeholder="Recherche" id="inputRecherche"><button class="btn btn-default" style="margin-left:6px;padding:4px 7px;" type="submit"><span class="glyphicon glyphicon-search"></span></button></form></li>';
+                echo '<li><form action="'.Router::get('search').'" method="get"><input name="q" type="text" placeholder="Recherche" id="inputRecherche"><button class="btn btn-default" style="margin-left:6px;padding:4px 7px;" type="submit"><span class="glyphicon glyphicon-search"></span></button></form></li>';
                 ?>
             </ul>
         </nav>

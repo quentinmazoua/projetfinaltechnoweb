@@ -2,6 +2,7 @@
 
 namespace Model;
 use Fuel\Core\Date;
+use Fuel\Core\DB;
 
 class Rental extends \Model_Crud
 {
@@ -55,4 +56,13 @@ class Rental extends \Model_Crud
 
         return "OUI";
     } 
+
+    public static function update_status($id, $newStatus)
+    {
+        $query = DB::update('locations');
+
+        $query->value('statut', $newStatus)->where('id', $id);
+
+        $query->execute();
+    }
 }

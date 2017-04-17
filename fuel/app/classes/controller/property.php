@@ -2,6 +2,7 @@
 
 use \Model\Property;
 use \Model\User;
+use \Model\Rental;
 
 class Controller_Property extends Controller
 {
@@ -20,7 +21,7 @@ class Controller_Property extends Controller
             {
                 foreach($properties_in_db as $property)
                 {
-                    $properties[] = array('nom' => $property->nom, 'adresse' => $property->adresse, 'pays' => $property->pays, 'ville' => $property->ville, 'date_ajout' => $property->date_ajout);
+                    $properties[] = array('id' => $property->id, 'nom' => $property->nom, 'adresse' => $property->adresse, 'pays' => $property->pays, 'ville' => $property->ville, 'date_ajout' => $property->date_ajout);
                 }
             }
             
@@ -57,24 +58,19 @@ class Controller_Property extends Controller
                 
                 if ($val->run()) // Si tous les champs du formulaire sont valides
                 {
-                    $view = View::forge('base');
+                    // Création d'une nouvelle propriété
+                    $property = Property::forge()->set(array(
+                        'id_proprietaire' => Session::get('user')['user_id'],
+                        'nom' => Input::post('nom'),
+                        'adresse' => Input::post('adresse'),
+                        'pays' => Input::post('pays'),
+                        'ville' => Input::post('ville'),
+                        'date_ajout' => Date::time()->format("%Y-%m-%d %H:%M:%S")
+                    ));
 
-                        // Création d'une nouvelle propriété
-                        $property = Property::forge()->set(array(
-                            'id_proprietaire' => Session::get('user')['user_id'],
-                            'nom' => Input::post('nom'),
-                            'adresse' => Input::post('adresse'),
-                            'pays' => Input::post('pays'),
-                            'ville' => Input::post('ville'),
-                            'date_ajout' => Date::time()->format("%Y-%m-%d %H:%M:%S")
-                        ));
+                    $property->save(); // Enregistrement de la nouvelle propriété dans la BDD
 
-                        $property->save(); // Enregistrement de la nouvelle propriété dans la BDD
-
-                        $view->set_global('title', 'Mes propriétés');
-                        $view->content = View::forge('property/properties');
-
-                    return Response::forge($view);
+                    return Response::redirect("properties");
                 }
                 else // Sinon le formulaire contient des erreurs
                 {
@@ -144,6 +140,7 @@ class Controller_Property extends Controller
 
             $view->set_global('propriete', $property);
             $view->set_global('proprietaire', $proprietaire);
+            $view->set_global('galerie', true);
 
             Session::set_flash('propriete', $property);
             Session::set_flash('proprietaire', $proprietaire);
@@ -153,6 +150,88 @@ class Controller_Property extends Controller
         else
         {
             return Response::forge(Presenter::forge('404'));
+        }
+    }
+
+    public function action_delete($id)
+    {
+        if(Session::get('user') != null)
+        {
+            $property = Property::find_by_pk($id);
+            if ($property)
+            {
+                $property->delete();
+
+                $rentals = Rental::find(array(
+                    'where' => array('id_propriete' => $id)
+                ));
+
+                if($rentals)
+                {
+                    foreach($rentals as $rental)
+                    {
+                        $rental->delete();
+                    }
+                }
+            }
+
+            return Response::redirect("properties");
+        }
+        else
+        {
+            return Response::redirect("/");
+        }
+    }
+
+    public function action_rentals($id)
+    {
+        if(Session::get('user') != null)
+        {
+            $rentals_in_db = Rental::find(array(
+                    'where' => array('id_propriete' => $id)
+            ));
+
+            $rentals = array();
+
+            if(count($rentals_in_db) > 0)
+            {
+                foreach($rentals_in_db as $rental)
+                {
+                    $propriete = Property::find(array(
+                        'where' => array('id' => $id)
+                    ));
+
+                    $locataire = User::find(array(
+                        'where' => array('id' => $rental->id_locataire)
+                    ));
+
+                    $locataire = $locataire[0];
+                    $propriete = $propriete[0];
+
+                    $rentals[] = array(
+                        'id' => $rental->id,
+                        'id_propriete' => $rental->id_propriete,
+                        'propriete' => $propriete->nom,
+                        'id_locataire' => $rental->id_locataire,
+                        'prenom_locataire' => $locataire->prenom,
+                        'nom_locataire' => $locataire->nom,
+                        'date_debut' => $rental->date_debut,
+                        'duree_sejour' => $rental->duree_sejour,
+                        'date_demande' => $rental->date_demande,
+                        'statut' => $rental->statut == 0 ? 'Réponse en attente':'Acceptée'
+                    );
+                }
+            }
+
+            $view = View::forge('base');
+            $view->content = View::forge('property/rentals');
+
+            $view->set_global('title', 'Demandes de location');
+            $view->set_global('rentals', $rentals);
+
+            Session::set_flash('id_propriete', $id);
+
+            return Response::forge($view);
         }
     }
 }

@@ -17,7 +17,7 @@ if(count($proprietes) > 0)
     {
         echo '<tr>';
         $date = Date::create_from_string($propriete["date_ajout"], "%Y-%m-%d %H:%M:%S")->format("%d/%m/%Y à %H:%M:%S UTC");
-        echo '<td>'.$propriete["nom"].'</td><td>'.$propriete["adresse"].'</td><td>'.$propriete["pays"].'</td><td>'.$propriete["ville"].'</td><td>'.$date.'</td><td><a href="#">Voir</a></td><td><a href="#"><font color="blue"><span class="glyphicon glyphicon-pencil"></span></font></a>&nbsp;&nbsp;&nbsp;<a href="#"><font color="red"><span class="glyphicon glyphicon-trash"></span></font></a></td>';
+        echo '<td><a href="'.Router::get('view_property', array($propriete["id"])).'">'.$propriete["nom"].'</a></td><td>'.$propriete["adresse"].'</td><td>'.$propriete["pays"].'</td><td>'.$propriete["ville"].'</td><td>'.$date.'</td><td><a href="#">Voir</a></td><td><a title="Éditer cette propriété" href="#"><font color="blue"><span class="glyphicon glyphicon-pencil"></span></font></a>&nbsp;&nbsp;&nbsp;<a title="Supprimer cette propriété" href="'.Router::get('delete_property', array($propriete['id'])).'"><font color="red"><span class="glyphicon glyphicon-trash"></span></font></a>&nbsp;&nbsp;&nbsp;<a title="Voir les demandes de location pour cette propriété" href="'.Router::get('property_rentals', array($propriete['id'])).'"><span class="glyphicon glyphicon-calendar"></span></a></td>';
         echo '</tr>';
     }
 

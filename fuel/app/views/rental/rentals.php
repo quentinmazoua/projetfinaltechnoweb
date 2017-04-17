@@ -16,7 +16,7 @@ if(count($rentals) > 0)
         echo '<tr>';
         $date_sejour = Date::create_from_string($rental["date_debut"], "%Y-%m-%d")->format("%d/%m/%Y");
         $date_demande = Date::create_from_string($rental["date_demande"], "%Y-%m-%d %H:%M:%S")->format("%d/%m/%Y à %H:%M:%S UTC");
-        echo '<td><a href="'.Router::get('view_property', array($rental['id_propriete'])).'">'.$rental["propriete"].'</td><td><a href="'.Router::get('view_user', array($rental['id_proprietaire'])).'">'.$rental["prenom_proprietaire"].' '.$rental["nom_proprietaire"].'</a><td>'.$date_sejour.'</td><td>'.$rental['duree_sejour'].' nuits</td><td>'.$date_demande.'</td><td>'.$rental['statut'].'<td><a href="#"><font color="red"><span class="glyphicon glyphicon-trash"></span></font></a></td>';
+        echo '<td><a href="'.Router::get('view_property', array($rental['id_propriete'])).'">'.$rental["propriete"].'</td><td><a href="'.Router::get('view_user', array($rental['id_proprietaire'])).'">'.$rental["prenom_proprietaire"].' '.$rental["nom_proprietaire"].'</a><td>'.$date_sejour.'</td><td>'.$rental['duree_sejour'].' nuits</td><td>'.$date_demande.'</td><td>'.$rental['statut'].'<td><a href="'.Router::get('cancel_rental', array($rental["id"])).'"><font color="red"><span class="glyphicon glyphicon-trash"></span></font></a></td>';
         echo '</tr>';
     }
 

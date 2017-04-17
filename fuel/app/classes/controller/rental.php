@@ -17,30 +17,34 @@ class Controller_Rental extends Controller
 
             $rentals = array();
 
-            foreach($rentals_in_db as $rental)
+            if(count($rentals_in_db) > 0)
             {
-                $propriete = Property::find(array(
-                    'where' => array('id' => $rental->id_propriete)
-                ));
+                foreach($rentals_in_db as $rental)
+                {
+                    $propriete = Property::find(array(
+                        'where' => array('id' => $rental->id_propriete)
+                    ));
 
-                $proprietaire = User::find(array(
-                    'where' => array('id' => $propriete[0]->id_proprietaire)
-                ));
+                    $proprietaire = User::find(array(
+                        'where' => array('id' => $propriete[0]->id_proprietaire)
+                    ));
 
-                $propriete = $propriete[0];
-                $proprietaire = $proprietaire[0];
+                    $propriete = $propriete[0];
+                    $proprietaire = $proprietaire[0];
 
-                $rentals[] = array(
-                    'id_propriete' => $rental->id_propriete,
-                    'propriete' => $propriete->nom,
-                    'id_proprietaire' => $proprietaire->id,
-                    'prenom_proprietaire' => $proprietaire->prenom,
-                    'nom_proprietaire' => $proprietaire->nom,
-                    'date_debut' => $rental->date_debut,
-                    'duree_sejour' => $rental->duree_sejour,
-                    'date_demande' => $rental->date_demande,
-                    'statut' => $rental->statut == 0 ? 'Réponse en attente':'Acceptée'
-                );
+                    $rentals[] = array(
+                        'id' => $rental->id,
+                        'id_propriete' => $rental->id_propriete,
+                        'propriete' => $propriete->nom,
+                        'id_proprietaire' => $proprietaire->id,
+                        'prenom_proprietaire' => $proprietaire->prenom,
+                        'nom_proprietaire' => $proprietaire->nom,
+                        'date_debut' => $rental->date_debut,
+                        'duree_sejour' => $rental->duree_sejour,
+                        'date_demande' => $rental->date_demande,
+                        'statut' => $rental->statut == 0 ? 'Réponse en attente':'Acceptée'
+                    );
+                }
             }
 
             $view = View::forge('base');
@@ -176,5 +180,48 @@ class Controller_Rental extends Controller
         {
             return Response::redirect("/");
         }
+    }
+
+    public function action_cancel($id)
+    {
+        if(Session::get('user') != null)
+        {
+            $rental = Rental::find_by_pk($id);
+            if ($rental)
+            {
+                $rental->delete();
+            }
+
+            return Response::redirect("rentals");
+        }
+        else
+        {
+            return Response::redirect("/");
+        }
+    }
+
+    public function action_accept($id)
+    {
+        if(Session::get('user') != null)
+        {
+            $rental = Rental::find(array(
+                'where' => array('id' => $id)
+            ));
+
+            if(count($rental) > 0)
+            {
+                $propriete = Property::find(array(
+                    'where' => array('id' => Session::get_flash('id_propriete', null, false))
+                ));
+
+                if($propriete[0]->id_proprietaire === Session::get('user')['user_id'])
+                {
+                    Rental::update_status($id, 1);
+
+                    return Response::redirect(Router::get("property_rentals", array(Session::get_flash('id_propriete', null, true))));
+                }
+            }
+        }
+        return Response::redirect("/");
     }
 }
