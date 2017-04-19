@@ -4,6 +4,7 @@ use \Model\Property;
 use \Model\User;
 use \Model\Rental;
 use \Model\Commentaire;
+use \Model\Photo;
 
 class Controller_Property extends Controller
 {
@@ -55,10 +56,39 @@ class Controller_Property extends Controller
 
                 $val->add('ville', 'ville')->add_rule('required');
 
-                $val->set_message('required', 'Le champ :label est obligatoire');        
+                $val->set_message('required', 'Le champ :label est obligatoire');   
+
+                $config = array(
+                    'path' => DOCROOT.'files',
+                    'randomize' => true,
+                    'ext_whitelist' => array('img', 'jpg', 'jpeg', 'gif', 'png'),
+                );     
                 
                 if ($val->run()) // Si tous les champs du formulaire sont valides
                 {
+                    Upload::process($config);
+
+                    if(Upload::is_valid())
+                    {
+                        Upload::save();   
+                    }
+
+                    $prefs = "";
+
+                    if(Input::post('preference_animaux') != "on")
+                    {
+                        $prefs .= 'no_pets';
+                    }
+
+                    if(Input::post('preference_cigarettes') != "on")
+                    {
+                        if($prefs != "")
+                        {
+                            $prefs .= ";";
+                        }
+                        $prefs .= 'no_smoking';
+                    }                    
+                    
                     // Création d'une nouvelle propriété
                     $property = Property::forge()->set(array(
                         'id_proprietaire' => Session::get('user')['user_id'],
@@ -66,10 +96,21 @@ class Controller_Property extends Controller
                         'adresse' => Input::post('adresse'),
                         'pays' => Input::post('pays'),
                         'ville' => Input::post('ville'),
-                        'date_ajout' => Date::time()->format("%Y-%m-%d %H:%M:%S")
+                        'date_ajout' => Date::time()->format("%Y-%m-%d %H:%M:%S"),
+                        'preferences' => $prefs
                     ));
 
                     $property->save(); // Enregistrement de la nouvelle propriété dans la BDD
+
+                    foreach(Upload::get_files() as $file)
+                    {
+                        $photo = Photo::forge(array(
+                            'id_propriete' => $property->id,
+                            'path' => $file['saved_as']
+                        ));
+
+                        $photo->save();
+                    }
 
                     return Response::redirect("properties");
                 }
@@ -102,6 +143,27 @@ class Controller_Property extends Controller
         }
     }
 
+    public function action_edit($id)
+    {
+        if(Session::get('user') != null)
+        {
+            if(Input::method() === "POST")
+            {
+
+            }
+            else
+            {
+                $view = View::forge('base');
+
+                $view->set_global('title', 'Propriete(Édition)');
+                $view->content = View::forge('property/edit');
+                $view->content->selectCountry = View::forge('property/country_select');
+
+                return Response::forge($view);
+            }
+        }
+    }
+
     public function action_view($id)
     {
         $property_in_db = Property::find(array(
@@ -130,8 +192,18 @@ class Controller_Property extends Controller
                 'adresse' => $property->adresse, 
                 'pays' => $property->pays, 
                 'ville' => $property->ville, 
-                'date_ajout' => $property->date_ajout
+                'date_ajout' => $property->date_ajout,
+                'preferences' => $property->preferences
             );
+
+            if($property['preferences'] != "")
+            {
+                $property['preferences'] = explode(';', $property['preferences']);
+            }
+            else
+            {
+                $property['preferences'] = array();
+            }
 
             $proprietaire = array(
                 'id' => $proprietaire->id, 
@@ -159,10 +231,24 @@ class Controller_Property extends Controller
                         'id_locataire' => $locataire->id,
                         'prenom_locataire' => $locataire->prenom,
                         'nom_locataire' => $locataire->nom,
-                        'date_publication' =>Date::create_from_string($commentaire->date_publication, "%Y-%m-%d")->format("%d/%m/%Y"),
+                        'date_publication' => Date::create_from_string($commentaire->date_publication, "%Y-%m-%d")->format("%d/%m/%Y"),
                         'note' => $commentaire->note,
                         'texte' => $commentaire->texte
                     );
+                }
+            }
+
+            $photos_db = Photo::find(array(
+                'where' => array('id_propriete' => $id)
+            ));
+
+            $photos = array();
+
+            if(count($photos_db) > 0)
+            {
+                foreach($photos_db as $photo)
+                {
+                    $photos[] = $photo->path;
                 }
             }
 
@@ -170,6 +256,7 @@ class Controller_Property extends Controller
             $view->set_global('proprietaire', $proprietaire);
             $view->set_global('galerie', true);
             $view->set_global('commentaires', $commentaires);
+            $view->set_global('photos', $photos);
 
             Session::set_flash('propriete', $property);
             Session::set_flash('proprietaire', $proprietaire);

@@ -1,5 +1,8 @@
 <?php
 echo '<br><a href="'.Router::get('account/edit').'"><button class="btn btn-primary">Editer</button></a><br><br><br>';
+
+Asset::add_path('files', 'img');
+
 if(Session::get('user')['user_image'] != "")
 {
     echo Asset::img(Session::get('user')['user_image'], array('class' => 'img-circle', 'alt', 'profile_image', 'height' => '64px', 'width' => '64px'));

@@ -21,5 +21,5 @@ return array(
 	'property/rentals/(:num)' => array('property/rentals/$1', 'name' => 'property_rentals'),
 	'accept-rental/(:num)' => array('rental/accept/$1', 'name' => 'accept_rental'),
 	'comment/(:num)' => array('property/comment/$1', 'name' => 'comment_property'),
-
+	'property/edit/(:num)' => array('property/edit/$1', 'name' => 'edit_property')
 );

@@ -194,12 +194,96 @@ class Controller_User extends Controller
     {
         if(Session::get('user') != null)
         {
-            $view = View::forge('base');
-            $view->content = View::forge('user/account');
+            if(Input::method() === "POST")
+            {
+                $val = Validation::forge();
 
-            $view->set_global('title', 'Mon compte');
+                // Définition des champs du formulaire et des règles de validation
+                $val->add('prenom', 'prénom')->add_rule('required');
 
-            return Response::forge($view);
+                $val->add('nom', 'nom')->add_rule('required');
+
+                $val->add('email', 'adresse mail')->add_rule('required')
+                    ->add_rule('valid_email');
+
+                $val->set_message('required', 'Le champ :label est obligatoire');
+                $val->set_message('valid_email', 'Le champ :label doit contenir une adresse mail valide');
+
+                if ($val->run()) // Si tous les champs du formulaire sont valides
+                {
+                    if(Input::post('email') != Session::get('user')['user_email'])
+                    {
+                        $email_in_db = User::find(array(
+                            'where' => array('email' => Input::post('email')) // Recherche de l'adresse mail dans la BDD
+                        ));
+
+                        if(count($email_in_db) == 1) // Si l'adresse mail est déjà utilisée dans la BDD
+                        {
+                            $view = View::forge('base');
+                            $view->set_global('email_taken', true);
+                            $view->set_global('title', 'Mon compte(Édition)');
+                            $view->content = View::forge('user/edit');
+
+                            return Response::forge($view);
+                        }
+                    }
+
+                    $config = array(
+                        'path' => DOCROOT.'files',
+                        'randomize' => true,
+                        'ext_whitelist' => array('img', 'jpg', 'jpeg', 'gif', 'png'),
+                    );
+
+                    Upload::process($config);
+
+                    if(Upload::is_valid())
+                    {
+                        Upload::save();
+
+                        User::update_user(Session::get('user')['user_id'], Input::post('prenom'), Input::post('nom'), Input::post('email'), Upload::get_files()[0]["saved_as"]);
+
+                        Session::set('user', array(
+                            'user_id' => Session::get('user')['user_id'],
+                            'user_firstname' => Input::post('prenom'), 
+                            'user_lastname' => Input::post('nom'), 
+                            'user_email' => Input::post('email'), 
+                            'user_date_inscription' => Session::get('user')['user_date_inscription'],
+                            'user_image' => Upload::get_files()[0]["saved_as"]
+                        ));
+
+                        return Response::redirect("account");
+                    }
+                    else
+                    {
+                        $view = View::forge('base');
+
+                        $view->set_global('title', 'Mon compte(Édition)');
+                        $view->set_global('upload_error', true);
+                        $view->content = View::forge('user/edit');
+
+                        return Response::forge($view);
+                    }
+                }
+                else // Sinon le formulaire contient des erreurs
+                {
+                    $view = View::forge('base');
+
+                    $view->set_global('title', 'Mon compte(Édition)');
+                    $view->set_global('errors', $val->error());
+                    $view->content = View::forge('user/edit');
+
+                    return Response::forge($view);
+                }
+            }
+            else
+            {
+                $view = View::forge('base');
+                $view->content = View::forge('user/edit');
+
+                $view->set_global('title', 'Mon compte(Édition)');
+
+                return Response::forge($view);
+            }
         }
         else
         {

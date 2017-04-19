@@ -31,4 +31,13 @@ class User extends \Model_Crud
 
         return $query->execute();
     }
+
+    public static function update_user($id, $prenom, $nom, $email, $image)
+    {
+        $query = DB::update('utilisateurs');
+
+        $query->set(array('prenom' => $prenom, 'nom' => $nom, 'email' => $email, 'image_profil' => $image))->where('id', $id);
+
+        return $query->execute();
+    }
 }

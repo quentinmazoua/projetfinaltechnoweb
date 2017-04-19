@@ -25,8 +25,18 @@ echo "<p>".$propriete["ville"]."</p>";
 echo "<p>Propriétaire: <a href='".Router::get('view_user', array($propriete['id_proprietaire']))."'>".$proprietaire["prenom"]." ".$proprietaire["nom"]."</a></p>";
 $date = Date::create_from_string($propriete["date_ajout"], "%Y-%m-%d %H:%M:%S")->format("%d/%m/%Y à %H:%M:%S UTC");
 echo "<p>Publiée le ".$date."</p>";
+if(in_array('no_smoking', $propriete['preferences']))
+{
+    echo Asset::img('no-smoking.png', array('title' => 'Interdit de fumer')).'&nbsp;&nbsp;';
+}
+
+if(in_array('no_pets', $propriete['preferences']))
+{
+    echo Asset::img('no-pets.png', array('title' => 'Animaux domestiques interdits'));
+}
+
 echo '</div>';
-echo '<div class="col-md-6"  style="height:200px;overflow:auto;">';
+echo '<div id="commentaires" class="col-md-6"  style="height:200px;overflow:auto;">';
 echo '<p>Commentaires:</p>';
 if(count($commentaires) > 0)
 {
@@ -44,9 +54,40 @@ else
 echo '</div>';
 echo '</div>';
 echo "<br><p>Galerie photos:</p>";
+
+echo Asset::css('fotorama.css');
+echo Asset::js('jquery-3.1.1.min.js');
+echo Asset::js('fotorama.js');
+echo Asset::js('property-manager.js');
+echo Asset::css('jquery.raty.css');
+echo Asset::js('jquery.raty.js');
+
+if(count($photos) > 0)
+{        
+    echo '<div class="fotorama" data-nav="thumbs">';
+    Asset::add_path('files', 'img');
+    
+    foreach($photos as $photo)
+    {
+        echo Asset::img($photo);
+    }
+    echo '</div>';
+
+    echo '<script>
+            $(document).ready(function(){
+                var bodyHeight = $("body").height();
+                var vwptHeight = $(window).height();
+                if (vwptHeight > bodyHeight) 
+                {
+                    $("footer").css("position","relative").css("bottom",0);
+                }
+
+            })</script>';
+}
+else
+{
+    echo "<p>Le propriétaire n'a pas encore publié de photo</p>";
+}
+echo '<br><br>';
+
 ?>
-<div class="fotorama" data-nav="thumbs">>
-  <img src="http://s.fotorama.io/1.jpg">
-  <img src="http://s.fotorama.io/2.jpg">
-</div>
-<br><br>

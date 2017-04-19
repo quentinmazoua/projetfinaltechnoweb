@@ -7,19 +7,6 @@
         <?php 
         echo Asset::css('bootstrap.min.css');
         echo Asset::css('style.css');
-        
-        if(isset($galerie))
-        {
-            echo Asset::css('fotorama.css');
-            echo Asset::js('jquery-3.1.1.min.js');
-            echo Asset::js('fotorama.js');
-            echo Asset::js('property-manager.js');
-        }
-        if(isset($commentaires))
-        {
-            echo Asset::css('jquery.raty.css');
-            echo Asset::js('jquery.raty.js');
-        }
         ?>
 
     </head>

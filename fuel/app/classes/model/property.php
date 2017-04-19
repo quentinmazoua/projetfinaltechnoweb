@@ -16,7 +16,8 @@ class Property extends \Model_Crud
     'adresse',
     'pays',
     'ville',
-    'date_ajout'
+    'date_ajout',
+    'preferences'
     );
 
     protected static $_mass_blacklist = array(

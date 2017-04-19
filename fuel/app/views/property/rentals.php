@@ -24,5 +24,5 @@ if(count($rentals) > 0)
 }
 else
 {
-    echo "<br><br><p>Vous n'avez pas encore de demande de location pour vos propriétés.</p>";
+    echo "<br><br><p>Vous n'avez pas encore de demande de location pour cette propriété.</p>";
 }

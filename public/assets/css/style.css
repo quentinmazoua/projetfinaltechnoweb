@@ -82,3 +82,26 @@ footer {
   padding-bottom:20px;
   font-size:1.1em;
 }
+
+#commentaires::-webkit-scrollbar {
+width:13px;
+}
+
+#commentaires::-webkit-scrollbar-thumb {
+background-color:#65A8A6;
+border-radius:10px;
+}
+#commentaires::-webkit-scrollbar-thumb:hover {
+background-color:#599492;
+
+}
+#commentaires::-webkit-scrollbar-thumb:active {
+background-color:#599492;
+}
+
+#commentaires::-webkit-scrollbar-track {
+  background-color:#cccccc;
+border:1px gray solid;
+border-radius:10px;
+-webkit-box-shadow:0 0 6px gray inset;
+} 

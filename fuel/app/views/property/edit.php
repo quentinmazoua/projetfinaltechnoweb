@@ -69,16 +69,5 @@
         <input name ="file_photo" id="file_photo" type="file" class="form-control" accept="image/*" multiple>
     </div>
     <br>
-    <button type="submit" class="btn btn-primary">Publier</button>
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
 </form>
-
-<?php echo Asset::js("jquery-3.1.1.min.js"); ?>
-
-<script>
-$(function(){
-    $(document).on('change','#file_photo' , function(){ 
-        //alert("New file"); 
-    });
-});
-    
-</script>

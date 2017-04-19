@@ -2,7 +2,9 @@
 echo "<br>";
 if($user['image_profil'] != "")
 {
-    echo Asset::img($user['image_profil'], array('class' => 'img-circle', 'alt', 'profile_image', 'height' => '64px', 'width' => '64px'));
+    Asset::add_path('files', 'img');
+
+    echo Asset::img(Session::get('user')['user_image'], array('class' => 'img-circle', 'alt', 'profile_image', 'height' => '64px', 'width' => '64px'));
 }
 else
 {
