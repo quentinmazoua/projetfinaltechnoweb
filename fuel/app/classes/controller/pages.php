@@ -2,6 +2,7 @@
 
 use \Model\User;
 use \Model\Property;
+use \Model\Photo;
 
 class Controller_Pages extends Controller
 {
@@ -17,13 +18,24 @@ class Controller_Pages extends Controller
 
     public function action_page($page = 'home')
     {
+        
         try
         {
             $view = View::forge('base');
 
-            $view->set_global('title', ucfirst($page));
+            if($page === 'home')
+            {
+                $view->set_global('title', 'Accueil');
+                $photos = Photo::get_lasts();
+                $view->set_global('photos', $photos);
+            }
+            else
+            {
+                $view->set_global('title', ucfirst($page));
+            }
+            
             $view->content = View::forge('pages/'.$page);
-
+            
             return Response::forge($view);
         }
         catch(Exception $e)

@@ -1,7 +1,7 @@
 <?php
 
 namespace Model;
-//use Fuel\Core\DB;
+use Fuel\Core\DB;
 
 class Photo extends \Model_Crud
 {
@@ -18,4 +18,13 @@ class Photo extends \Model_Crud
     protected static $_mass_blacklist = array(
         'id'
     );
+
+    public static function get_lasts()
+    {
+        $query = DB::select('*')->from('photos')
+                                ->limit(10)
+                                ->distinct();
+                                
+        return $query->execute();
+    }
 }

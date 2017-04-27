@@ -3,9 +3,9 @@
     Ce site a été réalisé dans le cadre du cours de Technologies Web Avancées de l'Université du Québec à Chicoutimi par:
     
     <ul>
-        <li>Quentin Mazoua (<code>Programmation &amp; Design</code>)</li>
-        <li>Benjamin Noyer (<code>Design</code>)</li>
-        <li>Thibault Klein (<code>Soutien moral ?</code>)</li>
+        <li>Quentin Mazoua</li>
+        <li>Benjamin Noyer</li>
+        <li>Thibault Klein</li>
     </ul>
 </div>
 <br>
